@@ -1,1 +1,1 @@
-http://raw.githack.com/ununull/sg/refs/heads/main/SuperGid.html
+Программа для подготовки к сдаче экзамена на гида на Кольском полуострове.
