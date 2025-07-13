@@ -12,16 +12,17 @@
   }
   main {
     flex-grow: 1;
-    padding: 20px 50px;
+    padding: 20px 20px 10px;
     overflow-y: auto;
   }
   #progress {
     text-align: center;
     margin-bottom: 20px;
+    cursor: pointer;
   }
   #question {
     font-size: 18px;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
   #question.result-center {
     text-align: center;
@@ -33,6 +34,7 @@
     cursor: pointer;
     border: 1px solid #ccc;
     white-space: pre-wrap;
+    user-select: none;
   }
   .option:hover {
     background-color: #cce5ff;
@@ -51,21 +53,24 @@
     background-color: #f8d7da !important;
     border-color: #dc3545 !important;
   }
+  .option.disabled {
+    pointer-events: none;
+    cursor: default;
+  }
   #remaining {
     color: red;
     text-align: center;
     margin-top: 10px;
   }
   footer {
-    padding: 20px;
     text-align: center;
+    background-color: transparent;
   }
   button {
     font-size: 16px;
     padding: 12px 24px;
-    margin: 0 5px;
+    width: 100%;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
     background: #e5e5e5;
   }
@@ -75,8 +80,6 @@
 </style>
 </head>
 <body>
-
-<header></header>
 
 <main>
   <div id="progress"></div>
@@ -1291,6 +1294,16 @@
   let selectedSet = new Set();
   let maxSelect = 1;
 
+  progressEl.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        alert(`Ошибка при попытке перейти в полноэкранный режим: ${err.message} (${err.name})`);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
   function shuffle(arr) {
     for(let i=arr.length-1; i>0; i--) {
       let j = Math.floor(Math.random()*(i+1));
@@ -1346,6 +1359,15 @@
     });
   }
 
+  function disableOptions() {
+    const optionDivs = optionsEl.children;
+    for(let i=0; i<optionDivs.length; i++) {
+      optionDivs[i].onclick = null;
+      optionDivs[i].tabIndex = -1;
+      optionDivs[i].classList.add('disabled');
+    }
+  }
+
   function selectOption(i) {
     if (answered) return;
     const optionDivs = optionsEl.children;
@@ -1359,12 +1381,21 @@
       } else return;
       const remain = maxSelect - selectedSet.size;
       remainingEl.textContent = remain > 0 ? `Осталось выбрать: ${remain}` : '';
-      if (remain === 0) showMultiResult();
+      if (remain === 0) {
+        answered = true;
+        // Показываем результат
+        for(let i=0; i<optionDivs.length; i++) {
+          if(correctSet.has(i)) optionDivs[i].classList.add('correct');
+          else if(selectedSet.has(i)) optionDivs[i].classList.add('incorrect');
+        }
+        if(arraysEqual([...selectedSet], [...correctSet])) score++;
+        remainingEl.textContent = '';
+        btnNext.style.display = 'inline-block';
+        disableOptions();
+      }
     } else {
       answered = true;
       for(let j=0; j<optionDivs.length; j++) {
-        optionDivs[j].onclick = null;
-        optionDivs[j].tabIndex = -1;
         if(correctSet.has(j)) optionDivs[j].classList.add('correct');
         else if(j === i) optionDivs[j].classList.add('incorrect');
         optionDivs[j].classList.remove('selected');
@@ -1372,23 +1403,8 @@
       if (correctSet.has(i)) score++;
       remainingEl.textContent = '';
       btnNext.style.display = 'inline-block';
+      disableOptions();
     }
-  }
-
-  function showMultiResult() {
-    answered = true;
-    const optionDivs = optionsEl.children;
-    for(let i=0; i<optionDivs.length; i++) {
-      optionDivs[i].onclick = null;
-      optionDivs[i].tabIndex = -1;
-      if(correctSet.has(i)) optionDivs[i].classList.add('correct');
-      else if(selectedSet.has(i)) optionDivs[i].classList.add('incorrect');
-      if(selectedSet.has(i)) optionDivs[i].classList.add('selected');
-      else optionDivs[i].classList.remove('selected');
-    }
-    if(arraysEqual([...selectedSet], [...correctSet])) score++;
-    remainingEl.textContent = '';
-    btnNext.style.display = 'inline-block';
   }
 
   btnNext.onclick = () => {
