@@ -1383,7 +1383,6 @@
       remainingEl.textContent = remain > 0 ? `Осталось выбрать: ${remain}` : '';
       if (remain === 0) {
         answered = true;
-        // Показываем результат
         for(let i=0; i<optionDivs.length; i++) {
           if(correctSet.has(i)) optionDivs[i].classList.add('correct');
           else if(selectedSet.has(i)) optionDivs[i].classList.add('incorrect');
