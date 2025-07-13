@@ -62,20 +62,17 @@
     text-align: center;
     margin-top: 10px;
   }
-  footer {
-    text-align: center;
-    background-color: transparent;
-  }
   button {
     font-size: 16px;
     padding: 24px;
     width: 100%;
-    border: none;
+    border: 1px solid #66b0ff;
+    border-radius: 5px;
     cursor: pointer;
-    background: #e5e5e5;
+    background: #aad1ff;
   }
   button:hover {
-    background: #d5d5d5;
+    background: #cce5ff;
   }
 </style>
 </head>
@@ -86,12 +83,9 @@
   <div id="question"></div>
   <div id="options"></div>
   <div id="remaining"></div>
-</main>
-
-<footer>
   <button id="btnNext" style="display:none;">СЛЕДУЮЩИЙ</button>
   <button id="btnRestart" style="display:none;">НАЧАТЬ ЗАНОВО</button>
-</footer>
+</main>
 
 <script>
   const questions = [
