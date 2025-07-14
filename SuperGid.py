@@ -1289,7 +1289,6 @@ class QuizApp:
 
         self.position_lbl_remaining()
 
-        # Удаляем старые виджеты вариантов
         for lbl in self.option_labels:
             lbl.destroy()
         self.option_labels.clear()
@@ -1363,8 +1362,8 @@ class QuizApp:
             lbl.unbind("<Enter>")
             lbl.unbind("<Leave>")
 
-        correct_bg = "#d4edda"    # светло-зеленый
-        incorrect_bg = "#f8d7da"  # светло-красный
+        correct_bg = "#d4edda"
+        incorrect_bg = "#f8d7da"
         default_bg = self.root.cget('bg')
 
         for i, lbl in enumerate(self.option_labels):
